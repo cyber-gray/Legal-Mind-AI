@@ -2,6 +2,10 @@
 python-dotenv>=1.0.0
 aiohttp>=3.9.1
 
+# Microsoft Semantic Kernel
+semantic-kernel>=1.0.0
+semantic-kernel[azure_openai]>=1.0.0
+
 # Azure AI & Bot Framework
 azure-ai-projects==1.0.0b11
 azure-identity>=1.15.0

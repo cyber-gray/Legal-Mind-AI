@@ -1,52 +1,84 @@
-# Legal-Mind-AI 🤖⚖️
+# Legal-Mind-AI v2.0 🤖⚖️
 
-An intelligent multi-agent system designed to provide expert guidance on AI policy and governance. Legal-Mind-AI helps technical and non-technical professionals navigate the complex landscape of AI regulations, frameworks, and compliance requirements.
+🚀 **Advanced AI Policy and Governance Assistant with Microsoft Semantic Kernel Integration**
 
-## 🌟 Features
+Legal-Mind-AI is a sophisticated AI-powered assistant designed to help organizations navigate the complex landscape of AI governance, policy compliance, and regulatory requirements. This enhanced version features Microsoft Semantic Kernel integration for advanced plugin-based orchestration and intelligent query routing.
 
-- **Multi-Agent Architecture**: Specialized AI agents for different aspects of legal analysis
-- **Microsoft Teams Integration**: Chat directly with the bot in Teams
-- **Comprehensive Knowledge Base**: Coverage of EU AI Act, NIST frameworks, ISO standards, AIDA, and more
-- **Real-time News Monitoring**: Stay updated with latest AI policy developments
-- **Professional Reports**: Generate PDF reports for stakeholders
-- **Email Delivery**: Send analysis and reports directly to email
-- **Policy Analysis**: Expert interpretation of complex regulations
-- **Compliance Guidance**: Actionable recommendations for AI system compliance
+## 🌟 Key Features
 
-## 🏗️ Architecture
+### 🧠 **Dual Orchestration Systems**
+- **Original Orchestrator**: Proven multi-agent system for AI policy guidance
+- **Semantic Kernel Orchestrator**: Advanced plugin-based system with intelligent query routing and planning
 
-### Core Components
+### 📊 **Multi-Agent Architecture**
+- **Policy Expert**: EU AI Act, GDPR, NIST AI RMF compliance guidance
+- **News Monitor**: Real-time AI regulation and policy news tracking
+- **Legal Search**: Document and regulation search capabilities  
+- **Report Generator**: Automated PDF report generation and email delivery
 
-1. **Orchestrator Agent**: Routes queries and coordinates between specialized agents
-2. **Policy Expert Agent**: Analyzes regulations and provides compliance guidance
-3. **News Monitor Agent**: Tracks latest AI policy developments
-4. **Document Analyzer Agent**: Reviews and compares policy documents
-5. **Report Generator Agent**: Creates comprehensive analysis reports
+### 🔌 **Plugin-Based Extensibility**
+- Modular plugin architecture with Microsoft Semantic Kernel
+- Easy plugin development and registration system
+- Dynamic capability discovery and intelligent routing
 
-### Services
+### 🌐 **Real-Time Information**
+- News API integration for latest AI policy developments
+- Web search capabilities for current legal information
+- RSS feed monitoring for regulatory updates
 
-- **PDF Generator**: Creates professional reports
-- **Email Service**: Handles email delivery with SendGrid/SMTP
-- **News Service**: Monitors multiple news sources and RSS feeds
-- **Teams Bot**: Microsoft Teams integration layer
+### 🏢 **Enterprise Integration**
+- Microsoft Teams Bot Framework support
+- Azure AI Projects integration
+- Email delivery system for reports
+- PDF generation for compliance documentation
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-
-- Python 3.8 or higher
-- Azure AI Services account
-- Microsoft Teams app registration
-- (Optional) SendGrid account for email delivery
-- (Optional) News API key for enhanced news monitoring
+- Python 3.11+
+- Azure AI Projects account (recommended)
+- API keys for news services (optional but recommended)
 
 ### Installation
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd Legal-Mind-v2
+   git clone https://github.com/cyber-gray/Legal-Mind-AI.git
+   cd Legal-Mind-AI
    ```
+
+2. **Create virtual environment**
+   ```bash
+   python -m venv v2env
+   source v2env/bin/activate  # On Windows: v2env\Scripts\activate
+   ```
+
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Setup environment**
+   ```bash
+   python setup_environment.py
+   ```
+
+5. **Test the system**
+   ```bash
+   python test_enhanced_semantic_kernel.py
+   ```
+
+### Quick Test
+```bash
+# Test with original orchestrator
+python console_test.py
+
+# Test with Semantic Kernel orchestrator  
+python console_test.py --orchestrator semantic
+
+# Interactive comparison
+python console_test.py --compare
+```
 
 2. **Create virtual environment**
    ```bash
