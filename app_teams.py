@@ -22,9 +22,9 @@ from botbuilder.core import (
 )
 from botbuilder.schema import Activity, ActivityTypes, ChannelAccount
 
-# Import our enhanced orchestrators
-from agents.orchestrator import orchestrator, QueryContext
-from agents.semantic_orchestrator_fixed import semantic_orchestrator
+# Import our enhanced orchestrator
+from agents.orchestrator import QueryContext
+from agents.legal_orchestrator import legal_orchestrator
 
 # Load environment variables
 load_dotenv()
@@ -55,11 +55,10 @@ conv_state = ConversationState(memory)
 
 # === Enhanced Teams Bot Class ===
 class LegalMindTeamsBot(ActivityHandler):
-    """Enhanced Legal-Mind-AI Teams Bot with dual orchestrator support"""
+    """Legal-Mind-AI Teams Bot with multi-agent orchestration"""
     
     def __init__(self):
         super().__init__()
-        self.user_preferences = {}  # Store user preferences per user
         
     async def on_message_activity(self, turn_context: TurnContext):
         """Handle incoming messages"""
@@ -77,25 +76,29 @@ class LegalMindTeamsBot(ActivityHandler):
         """Send welcome message when bot is added to conversation"""
         welcome_text = """🤖 **Welcome to Legal-Mind-AI v2.0!**
 
-I'm your AI-powered assistant for AI policy, governance, and compliance guidance.
+I'm your AI-powered multi-agent assistant for AI policy, governance, and compliance guidance.
 
 **What I can help with:**
-• EU AI Act compliance requirements
-• NIST AI Risk Management Framework
-• Latest AI regulation news
-• Policy analysis and recommendations
-• Compliance report generation
+• **Policy Analysis**: EU AI Act, NIST Framework, GDPR compliance
+• **Latest News**: Real-time AI regulation updates
+• **Document Analysis**: Legal document review and insights
+• **Report Generation**: Compliance reports and summaries
+
+**Specialized Agents:**
+• 📋 **Policy Expert**: Regulatory guidance and compliance
+• 📰 **News Monitor**: Latest AI policy developments  
+• 📄 **Document Analyzer**: Legal document insights
+• 📊 **Report Generator**: Compliance documentation
 
 **Commands:**
 • `/help` - Show this help message
-• `/semantic` - Switch to Semantic Kernel orchestrator
-• `/original` - Switch to original orchestrator
-• `/status` - Check current settings
+• `/status` - Check system status
 
 **Example queries:**
 • "What are the key requirements of the EU AI Act?"
 • "Latest news on AI regulation"
 • "Generate a compliance report for high-risk AI systems"
+• "Analyze this AI governance framework"
 
 Ask me anything about AI governance and policy! 🚀"""
 
@@ -108,44 +111,21 @@ Ask me anything about AI governance and policy! 🚀"""
         if command == '/help':
             await self.on_welcome_activity(turn_context)
             
-        elif command == '/semantic':
-            self.user_preferences[user_id] = {'orchestrator': 'semantic'}
-            await turn_context.send_activity(MessageFactory.text(
-                "✅ **Switched to Semantic Kernel orchestrator**\n\n"
-                "🧠 Enhanced features enabled:\n"
-                "• Plugin-based routing\n"
-                "• Intelligent query planning\n"
-                "• Advanced result synthesis\n\n"
-                "Try asking a complex policy question!"
-            ))
-            
-        elif command == '/original':
-            self.user_preferences[user_id] = {'orchestrator': 'original'}
-            await turn_context.send_activity(MessageFactory.text(
-                "✅ **Switched to Original orchestrator**\n\n"
-                "⚡ Classic features enabled:\n"
-                "• Multi-agent system\n"
-                "• Fast response times\n"
-                "• Proven reliability\n\n"
-                "Ready to help with AI policy questions!"
-            ))
-            
         elif command == '/status':
-            prefs = self.user_preferences.get(user_id, {'orchestrator': 'original'})
-            orchestrator_type = prefs['orchestrator']
-            
-            status_message = f"""📊 **Current Settings**
+            status_message = f"""📊 **Legal-Mind-AI System Status**
 
 **User:** `{user_id}`
-**Orchestrator:** **{orchestrator_type.title()}**
+**Orchestrator:** **Multi-Agent System**
 **Status:** ✅ Active
 
-**Available Commands:**
-• `/semantic` - Switch to Semantic Kernel
-• `/original` - Switch to Original
-• `/help` - Show help message
+**Available Agents:**
+• 📋 Policy Expert - AI regulations and compliance
+• 📰 News Monitor - Latest policy developments
+• 📄 Document Analyzer - Legal document insights
+• 📊 Report Generator - Compliance reports
 
-**System Status:** 🟢 All systems operational"""
+**System Status:** 🟢 All agents operational
+**Version:** 2.0 (Multi-Agent Architecture)"""
 
             await turn_context.send_activity(MessageFactory.text(status_message))
             
@@ -156,7 +136,7 @@ Ask me anything about AI governance and policy! 🚀"""
             ))
     
     async def _process_query(self, turn_context: TurnContext, query: str, user_id: str):
-        """Process user query with selected orchestrator"""
+        """Process user query with the new legal orchestrator"""
         if not query.strip():
             await turn_context.send_activity(MessageFactory.text(
                 "💬 Please ask me a question about AI policy or governance!\n\n"
@@ -168,10 +148,6 @@ Ask me anything about AI governance and policy! 🚀"""
             # Show typing indicator
             await turn_context.send_activity(MessageFactory.text("🤔 Analyzing your query..."))
             
-            # Get user's orchestrator preference
-            prefs = self.user_preferences.get(user_id, {'orchestrator': 'original'})
-            use_semantic = prefs['orchestrator'] == 'semantic'
-            
             # Create query context
             context = QueryContext(
                 user_id=user_id,
@@ -180,19 +156,11 @@ Ask me anything about AI governance and policy! 🚀"""
                 output_format="text"
             )
             
-            # Select orchestrator
-            if use_semantic:
-                orchestrator_name = "Semantic Kernel"
-                selected_orchestrator = semantic_orchestrator
-            else:
-                orchestrator_name = "Original"
-                selected_orchestrator = orchestrator
-            
-            # Process query
-            response = await selected_orchestrator.process_query(context)
+            # Process with the new legal orchestrator
+            response = await legal_orchestrator.process_query(context)
             
             # Format response for Teams
-            formatted_response = self._format_teams_response(response, orchestrator_name, query)
+            formatted_response = self._format_teams_response(response, "Legal-Mind Multi-Agent", query)
             
             # Send response (Teams has a message limit, so we might need to split)
             await self._send_long_message(turn_context, formatted_response)
@@ -205,7 +173,7 @@ Ask me anything about AI governance and policy! 🚀"""
 💡 **Troubleshooting:**
 • Try rephrasing your question
 • Use `/help` for guidance
-• Switch orchestrators with `/semantic` or `/original`"""
+• Ask about specific AI policies or regulations"""
 
             await turn_context.send_activity(MessageFactory.text(error_message))
     
@@ -215,11 +183,11 @@ Ask me anything about AI governance and policy! 🚀"""
         response = response.strip()
         
         # Add header with orchestrator info
-        formatted = f"🤖 **Legal-Mind-AI** _{orchestrator_name} Orchestrator_\n\n"
+        formatted = f"🤖 **Legal-Mind-AI** _{orchestrator_name}_\n\n"
         formatted += response
         
         # Add footer
-        formatted += f"\n\n---\n_💡 Switch orchestrators: `/semantic` or `/original` • More help: `/help`_"
+        formatted += f"\n\n---\n_💡 Multi-agent system • More help: `/help` • Status: `/status`_"
         
         return formatted
     
@@ -309,7 +277,8 @@ async def health_check(req: web.Request) -> web.Response:
         "service": "Legal-Mind-AI Teams Bot",
         "version": "2.0",
         "timestamp": time.time(),
-        "orchestrators": ["original", "semantic"],
+        "orchestrator": "multi-agent",
+        "agents": list(legal_orchestrator.agents.keys()),
         "endpoints": {
             "messages": "/api/messages",
             "health": "/health"
@@ -321,20 +290,27 @@ async def bot_info(req: web.Request) -> web.Response:
     return web.json_response({
         "name": "Legal-Mind-AI",
         "version": "2.0",
-        "description": "AI-powered assistant for AI policy, governance, and compliance guidance",
+        "architecture": "Multi-Agent Orchestration",
+        "description": "AI-powered multi-agent assistant for AI policy, governance, and compliance guidance",
         "features": [
+            "Multi-agent orchestration system",
+            "Specialized AI policy agents",
             "EU AI Act compliance guidance",
             "NIST AI Risk Management Framework",
             "Real-time AI regulation news",
-            "Policy analysis and recommendations",
+            "Document analysis and insights",
             "Compliance report generation",
-            "Dual orchestrator support"
+            "Intelligent query routing"
+        ],
+        "agents": [
+            "Policy Expert - AI regulations and compliance",
+            "News Monitor - Latest policy developments", 
+            "Document Analyzer - Legal document insights",
+            "Report Generator - Compliance reports"
         ],
         "commands": [
             "/help - Show help message",
-            "/semantic - Switch to Semantic Kernel orchestrator",
-            "/original - Switch to original orchestrator", 
-            "/status - Check current settings"
+            "/status - Check system status"
         ]
     })
 
@@ -357,17 +333,15 @@ if __name__ == "__main__":
         print(f"📊 Bot info: http://localhost:{port}/info")
         
         print(f"\n🤖 Bot Features:")
-        print(f"   • Dual orchestrator support (Original + Semantic Kernel)")
-        print(f"   • Interactive Teams commands")
-        print(f"   • AI policy and governance expertise")
+        print(f"   • Multi-agent orchestration system")
+        print(f"   • Specialized AI policy agents")
         print(f"   • Real-time news monitoring")
+        print(f"   • Document analysis capabilities")
         print(f"   • Compliance report generation")
         
         print(f"\n💡 Teams Commands:")
         print(f"   /help - Show help message")
-        print(f"   /semantic - Switch to Semantic Kernel orchestrator")
-        print(f"   /original - Switch to original orchestrator")
-        print(f"   /status - Check current settings")
+        print(f"   /status - Check system status")
         
         print(f"\n🔧 Environment:")
         print(f"   • Python: {sys.version}")

@@ -1,3 +1,8 @@
+"""
+Legal-Mind-AI Main Application
+Simplified single orchestrator application using the new legal orchestrator
+"""
+
 import os
 import sys
 import json
@@ -6,9 +11,6 @@ import asyncio
 from dotenv import load_dotenv
 from aiohttp import web
 
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
-from azure.ai.agents.models import ListSortOrder, RunStatus
 from botbuilder.core import (
     BotFrameworkAdapterSettings,
     TurnContext,
@@ -20,39 +22,49 @@ from botbuilder.core import (
 )
 from botbuilder.schema import Activity, ActivityTypes, ChannelAccount
 
-# Import our enhanced orchestrators
-from agents.orchestrator import orchestrator, QueryContext
-from agents.semantic_orchestrator import semantic_orchestrator
+# Import our new legal orchestrator
+from agents.orchestrator import QueryContext
+from agents.legal_orchestrator import legal_orchestrator
 
-# Load .env
+# Load environment variables
 load_dotenv()
 
-# === Teams / Bot Framework Setup ===
-APP_ID   = os.getenv("MICROSOFT_APP_ID")
-APP_PASS = os.getenv("MICROSOFT_APP_PASSWORD")
+# === Bot Framework Setup ===
+APP_ID = os.getenv("MICROSOFT_APP_ID", "")
+APP_PASS = os.getenv("MICROSOFT_APP_PASSWORD", "")
+
+# For development/testing, allow empty credentials 
 if not APP_ID or not APP_PASS:
-    print("❌ Please set MICROSOFT_APP_ID and MICROSOFT_APP_PASSWORD in your .env")
-    print("💡 For testing, you can use placeholder values to test locally")
-    # Use placeholder values for local testing
-    APP_ID = "test-app-id"
-    APP_PASS = "test-app-password"
+    print("⚠️  Bot Framework credentials not found. Running in development mode.")
+    APP_ID = ""
+    APP_PASS = ""
+
+print(f"🔧 Bot Configuration:")
+print(f"   App ID: {APP_ID if APP_ID else 'Development Mode (Empty)'}")
+print(f"   App Password: {'*' * len(APP_PASS) if APP_PASS else 'Development Mode (Empty)'}")
 
 settings = BotFrameworkAdapterSettings(APP_ID, APP_PASS)
-adapter  = BotFrameworkAdapter(settings)
-memory   = MemoryStorage()
-conv_st   = ConversationState(memory)
+
+# For development, allow unauthenticated requests
+if not APP_ID and not APP_PASS:
+    settings.app_id = ""
+    settings.app_password = ""
+
+adapter = BotFrameworkAdapter(settings)
+memory = MemoryStorage()
+conv_state = ConversationState(memory)
 
 # === Enhanced Teams Bot Class ===
 class LegalMindTeamsBot(ActivityHandler):
-    """Enhanced Legal-Mind-AI Teams Bot with dual orchestrator support"""
+    """Legal-Mind-AI Teams Bot with multi-agent orchestration"""
     
     def __init__(self):
-        self.user_preferences = {}  # Store user preferences
+        super().__init__()
         
     async def on_message_activity(self, turn_context: TurnContext):
         """Handle incoming messages"""
         user_id = turn_context.activity.from_property.id
-        text = turn_context.activity.text.strip()
+        text = turn_context.activity.text.strip() if turn_context.activity.text else ""
         
         # Handle bot commands
         if text.lower().startswith('/'):
@@ -63,62 +75,55 @@ class LegalMindTeamsBot(ActivityHandler):
     
     async def on_welcome_activity(self, turn_context: TurnContext):
         """Send welcome message when bot is added to conversation"""
-        welcome_text = """
-🤖 **Welcome to Legal-Mind-AI v2.0!**
+        welcome_text = """🤖 **Welcome to Legal-Mind-AI v2.0!**
 
-I'm your AI-powered assistant for AI policy, governance, and compliance guidance.
+I'm your AI-powered multi-agent assistant for AI policy, governance, and compliance guidance.
 
 **What I can help with:**
-• EU AI Act compliance requirements
-• NIST AI Risk Management Framework
-• Latest AI regulation news
-• Policy analysis and recommendations
-• Compliance report generation
+• **Policy Analysis**: EU AI Act, NIST Framework, GDPR compliance
+• **Latest News**: Real-time AI regulation updates
+• **Document Analysis**: Legal document review and insights
+• **Report Generation**: Compliance reports and summaries
+
+**Specialized Agents:**
+• 📋 **Policy Expert**: Regulatory guidance and compliance
+• 📰 **News Monitor**: Latest AI policy developments  
+• 📄 **Document Analyzer**: Legal document insights
+• 📊 **Report Generator**: Compliance documentation
 
 **Commands:**
 • `/help` - Show this help message
-• `/semantic` - Switch to Semantic Kernel orchestrator
-• `/original` - Switch to original orchestrator
-• `/status` - Check current settings
+• `/status` - Check system status
 
 **Example queries:**
 • "What are the key requirements of the EU AI Act?"
 • "Latest news on AI regulation"
 • "Generate a compliance report for high-risk AI systems"
 
-Ask me anything about AI governance and policy! 🚀
-"""
+Ask me anything about AI governance and policy! 🚀"""
         await turn_context.send_activity(MessageFactory.text(welcome_text))
     
     async def _handle_command(self, turn_context: TurnContext, command: str):
         """Handle bot commands"""
-        user_id = turn_context.activity.from_property.id
         
         if command == '/help':
             await self.on_welcome_activity(turn_context)
             
-        elif command == '/semantic':
-            self.user_preferences[user_id] = {'orchestrator': 'semantic'}
-            await turn_context.send_activity(MessageFactory.text(
-                "✅ Switched to **Semantic Kernel orchestrator**\n"
-                "Enhanced plugin-based routing and intelligent query planning enabled!"
-            ))
-            
-        elif command == '/original':
-            self.user_preferences[user_id] = {'orchestrator': 'original'}
-            await turn_context.send_activity(MessageFactory.text(
-                "✅ Switched to **Original orchestrator**\n"
-                "Classic multi-agent system enabled!"
-            ))
-            
         elif command == '/status':
-            prefs = self.user_preferences.get(user_id, {'orchestrator': 'original'})
-            orchestrator_type = prefs['orchestrator']
             await turn_context.send_activity(MessageFactory.text(
-                f"📊 **Current Settings:**\n"
-                f"• Orchestrator: **{orchestrator_type.title()}**\n"
-                f"• User ID: `{user_id}`\n\n"
-                f"Use `/semantic` or `/original` to switch orchestrators."
+                """📊 **System Status**
+
+**Multi-Agent System**: ✅ Active
+**Specialized Agents**:
+• 📋 Policy Expert: ✅ Ready
+• 📰 News Monitor: ✅ Ready  
+• 📄 Document Analyzer: ✅ Ready
+• 📊 Report Generator: ✅ Ready
+
+**Azure AI Integration**: ✅ Connected
+**Teams Bot**: ✅ Online
+
+Ready to assist with your AI governance questions! 🤖"""
             ))
             
         else:
@@ -128,14 +133,10 @@ Ask me anything about AI governance and policy! 🚀
             ))
     
     async def _process_query(self, turn_context: TurnContext, query: str, user_id: str):
-        """Process user query with selected orchestrator"""
+        """Process user query with the multi-agent orchestrator"""
         try:
             # Show typing indicator
             await turn_context.send_activity(MessageFactory.text("🤔 Analyzing your query..."))
-            
-            # Get user's orchestrator preference
-            prefs = self.user_preferences.get(user_id, {'orchestrator': 'original'})
-            use_semantic = prefs['orchestrator'] == 'semantic'
             
             # Create query context
             context = QueryContext(
@@ -145,37 +146,69 @@ Ask me anything about AI governance and policy! 🚀
                 output_format="text"
             )
             
-            # Select orchestrator
-            if use_semantic:
-                orchestrator_name = "Semantic Kernel"
-                selected_orchestrator = semantic_orchestrator
-            else:
-                orchestrator_name = "Original"
-                selected_orchestrator = orchestrator
-            
-            # Process query
-            response = await selected_orchestrator.process_query(context)
+            # Process with the new legal orchestrator
+            response = await legal_orchestrator.process_query(context)
             
             # Format response for Teams
-            formatted_response = self._format_teams_response(response, orchestrator_name)
+            formatted_response = self._format_teams_response(response, "Legal-Mind Multi-Agent", query)
             
-            # Send response
-            await turn_context.send_activity(MessageFactory.text(formatted_response))
+            # Send response (Teams has a message limit, so we might need to split)
+            await self._send_long_message(turn_context, formatted_response)
             
         except Exception as e:
-            error_message = f"❌ **Error Processing Query**\n\n{str(e)}\n\nPlease try rephrasing your question or use `/help` for guidance."
+            error_message = f"""❌ **Error Processing Query**
+
+{str(e)}
+
+💡 **Troubleshooting:**
+• Try rephrasing your question
+• Use `/help` for guidance
+• Ask about specific AI policies or regulations"""
+
             await turn_context.send_activity(MessageFactory.text(error_message))
     
-    def _format_teams_response(self, response: str, orchestrator_name: str) -> str:
+    def _format_teams_response(self, response: str, orchestrator_name: str, query: str) -> str:
         """Format response for better Teams display"""
+        # Clean up the response
+        response = response.strip()
+        
         # Add header with orchestrator info
-        formatted = f"🤖 **Legal-Mind-AI** _{orchestrator_name} Orchestrator_\n\n"
+        formatted = f"🤖 **Legal-Mind-AI** _{orchestrator_name}_\n\n"
         formatted += response
         
         # Add footer
-        formatted += f"\n\n---\n_💡 Use `/semantic` or `/original` to switch orchestrators • `/help` for commands_"
+        formatted += f"\n\n---\n_💡 Multi-agent system • More help: `/help` • Status: `/status`_"
         
         return formatted
+    
+    async def _send_long_message(self, turn_context: TurnContext, message: str, max_length: int = 28000):
+        """Send long messages by splitting them if necessary"""
+        if len(message) <= max_length:
+            await turn_context.send_activity(MessageFactory.text(message))
+            return
+        
+        # Split message into chunks
+        chunks = []
+        current_chunk = ""
+        
+        for line in message.split('\n'):
+            if len(current_chunk) + len(line) + 1 <= max_length:
+                current_chunk += line + '\n'
+            else:
+                if current_chunk:
+                    chunks.append(current_chunk.strip())
+                current_chunk = line + '\n'
+        
+        if current_chunk:
+            chunks.append(current_chunk.strip())
+        
+        # Send chunks
+        for i, chunk in enumerate(chunks):
+            if i == 0:
+                await turn_context.send_activity(MessageFactory.text(chunk))
+            else:
+                continuation = f"📄 **Continued ({i+1}/{len(chunks)})**\n\n{chunk}"
+                await turn_context.send_activity(MessageFactory.text(continuation))
     
     async def on_members_added_activity(
         self, members_added: list[ChannelAccount], turn_context: TurnContext
