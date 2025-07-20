@@ -1,22 +1,33 @@
 # Legal-Mind-AI v2.0 🏛️
 
-**Enterprise-grade Multi-Agent Legal Analysis System**
+**Enterprise-grade Multi-Agent Legal Analysis System with Azure AI Foundry Integration**
 
-Legal-Mind-AI is a modernized, production-ready multi-agent orchestration system that provides expert legal research, analysis, and consultation using Azure AI Foundry, Semantic Kernel, and direct OpenAI integration.
+Legal-Mind-AI is a production-ready multi-agent orchestration system that provides expert legal research, analysis, and consultation through **Azure AI Foundry** integration, Semantic Kernel, and intelligent agent orchestration.
 
 [![Production Ready](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)](https://github.com/cyber-gray/Legal-Mind-AI)
-[![Quality Score](https://img.shields.io/badge/Quality%20Score-10%2F10-brightgreen)](https://github.com/cyber-gray/Legal-Mind-AI)
-[![Azure Integration](https://img.shields.io/badge/Azure-AI%20Foundry-blue)](https://github.com/cyber-gray/Legal-Mind-AI)
+[![Azure AI Foundry](https://img.shields.io/badge/Azure%20AI%20Foundry-Integrated-blue)](https://github.com/cyber-gray/Legal-Mind-AI)
+[![Thread Visibility](https://img.shields.io/badge/Thread%20Visibility-Portal%20Ready-green)](https://github.com/cyber-gray/Legal-Mind-AI)
+
+## 🎉 **Major Milestone: Azure AI Foundry Integration Complete!**
+
+**Latest Achievement (July 2025)**: Successfully integrated with Azure AI Foundry, enabling:
+- ✅ **Real Azure AI Foundry Threads**: Full conversation history visible in portal
+- ✅ **Existing Agent Integration**: Seamless use of user-created agents (no duplicates)
+- ✅ **Dual-Mode Operation**: Foundry + Direct OpenAI with automatic fallback
+- ✅ **100% Success Rate**: Comprehensive testing with 6-agent multi-turn conversations
+- ✅ **Portal Visibility**: Complete thread management via Azure AI Foundry portal
+
+> 📋 **[View Complete Integration Documentation](./AZURE_AI_FOUNDRY_INTEGRATION_CHECKPOINT.md)**
 
 ## 🚀 **What's New in v2.0**
 
-- ✅ **Modernized Architecture**: Migrated to Semantic Kernel 1.34.0 with async/await
-- ✅ **Azure AI Foundry Integration**: Direct OpenAI API integration with Azure services
-- ✅ **Multi-Agent Group Chat**: Intelligent agent orchestration and conversation management
-- ✅ **Conversation Persistence**: Azure Storage blob persistence with thread tracking
-- ✅ **Token Usage Monitoring**: Comprehensive API usage logging and analytics
-- ✅ **Quality Scoring**: Demonstrated 10/10 quality performance in complex legal analysis
-- ✅ **Clean Production Code**: Streamlined, maintainable, enterprise-ready architecture
+- ✅ **Azure AI Foundry Integration**: Native integration with user-created agents and threads
+- ✅ **Thread Management**: Real Azure AI Foundry threads with portal visibility
+- ✅ **Modernized Architecture**: Semantic Kernel 1.34.0 with full async/await
+- ✅ **Multi-Agent Orchestration**: 5 specialized agents with intelligent coordination
+- ✅ **Dual-Mode Operation**: Foundry + Direct OpenAI with seamless fallback
+- ✅ **Quality Scoring System**: Comprehensive response analysis and metrics
+- ✅ **Enterprise Storage**: Azure Storage persistence with conversation tracking
 
 ## 🎯 **Key Features**
 
@@ -40,33 +51,45 @@ Legal-Mind-AI is a modernized, production-ready multi-agent orchestration system
 
 ## 🏗️ **System Architecture**
 
+### **Azure AI Foundry Integration**
 ```mermaid
 graph TD
-    A[User Query] --> B[Coordinator Agent]
-    B --> C[Query Analysis]
-    C --> D[Agent Selection]
-    D --> E[Research Agent]
-    D --> F[Policy Analyst]
-    D --> G[Compliance Expert]
-    D --> H[Comparative Analyst]
-    E --> I[Coordinator Synthesis]
-    F --> I
-    G --> I
-    H --> I
-    I --> J[Final Analysis & Quality Score]
-    J --> K[Azure Storage Persistence]
-    J --> L[User Response]
+    A[User Query] --> B[Enhanced Legal Mind Orchestrator]
+    B --> C{Integration Mode}
+    C -->|Foundry Mode| D[Azure AI Foundry]
+    C -->|Direct Mode| E[Azure OpenAI API]
+    
+    D --> F[Existing User Agents]
+    F --> G[Legal-Mind-Agent - Coordinator]
+    F --> H[Policy-Expert-Agent]
+    F --> I[News-Monitor-Agent]
+    F --> J[Document-Analyzer-Agent] 
+    F --> K[Report-Generator-Agent]
+    
+    G --> L[Azure AI Foundry Thread]
+    H --> L
+    I --> L
+    J --> L
+    K --> L
+    
+    L --> M[Quality Scoring]
+    M --> N[Azure Storage Persistence]
+    N --> O[Portal Visibility]
+    O --> P[User Response]
+    
+    E --> Q[Direct OpenAI Processing]
+    Q --> M
 ```
 
-### **Specialized Agents**
+### **Agent Mapping & Integration**
 
-| Agent | Role | Expertise |
-|-------|------|-----------|
-| **🔍 Research Agent** | Legal research & case law analysis | Statutes, regulations, precedents |
-| **📋 Policy Analyst** | Policy interpretation & framework analysis | Regulatory structures, compliance requirements |
-| **⚖️ Compliance Expert** | Risk assessment & compliance solutions | Multi-jurisdictional compliance, risk mitigation |
-| **🌍 Comparative Analyst** | Cross-jurisdictional analysis | International law, best practices |
-| **🎯 Coordinator** | Orchestration & synthesis | Quality control, comprehensive analysis |
+| System Role | Azure AI Foundry Agent | Agent ID | Portal Name |
+|-------------|-------------------------|----------|-------------|
+| **🎯 Coordinator** | Legal-Mind-Agent | `asst_9n1GM1R8Ctgtvg8AxRv56dum` | Orchestration & synthesis |
+| **📋 Policy Analyst** | Policy-Expert-Agent | `asst_ckLjqwTCVE4Vnd8DCr4Mcnyg` | Policy interpretation & analysis |
+| **🔍 Research Agent** | News-Monitor-Agent | `asst_MudTzzQB7zFlbooxmmfR08ux` | Legal research & precedents |
+| **⚖️ Compliance Expert** | Document-Analyzer-Agent | `asst_BkU6ojq194EcZc7fsT1pru03` | Risk assessment & compliance |
+| **🌍 Comparative Analyst** | Report-Generator-Agent | `asst_OsllbKAV8ehEWYBrai4LqG4b` | Cross-jurisdictional analysis |
 
 ## 🚀 **Quick Start**
 
@@ -97,24 +120,55 @@ cp .env.example .env
 
 4. **Run the system:**
 ```bash
+# With Azure AI Foundry integration (recommended)
+python legal_mind_experimental.py
+
+# Direct mode only
 python legal_mind_working_system.py
 ```
 
 ### **Environment Configuration**
 
-Required environment variables:
+#### **Azure AI Foundry Integration (Recommended)**
 ```env
-# Azure OpenAI Configuration
+# Azure AI Foundry Project
+AZURE_AI_PROJECT_ENDPOINT=https://your-project.services.ai.azure.com/api/projects/Your-Project
+
+# Azure OpenAI (for fallback)
 AZURE_OPENAI_ENDPOINT=https://your-resource.cognitiveservices.azure.com/
 AZURE_OPENAI_API_KEY=your_openai_api_key
 AZURE_OPENAI_DEPLOYMENT_NAME=your_deployment_name
 
 # Azure Storage (for conversation persistence)
 AZURE_STORAGE_CONNECTION_STRING=your_storage_connection_string
-
-# Optional: Azure AI Project (for Foundry integration)
-PROJECT_CONNECTION_STRING=your_project_connection_string
 ```
+
+#### **Direct Mode Configuration**
+```env
+# Azure OpenAI Configuration (required)
+AZURE_OPENAI_ENDPOINT=https://your-resource.cognitiveservices.azure.com/
+AZURE_OPENAI_API_KEY=your_openai_api_key
+AZURE_OPENAI_DEPLOYMENT_NAME=your_deployment_name
+
+# Azure Storage (for conversation persistence)
+AZURE_STORAGE_CONNECTION_STRING=your_storage_connection_string
+```
+
+### **Azure AI Foundry Setup**
+
+1. **Create Azure AI Foundry Project:**
+   - Navigate to [Azure AI Foundry](https://ai.azure.com)
+   - Create new project: "Legal-Mind"
+   - Note your project endpoint URL
+
+2. **Create Agents in Foundry:**
+   - Create 5 specialized agents with custom instructions
+   - Map agent IDs to system roles in code
+   - Agents will appear in your Foundry portal
+
+3. **Configure Authentication:**
+   - Use Azure CLI: `az login`
+   - Or configure managed identity for production
 
 ## 💡 **Usage Examples**
 
