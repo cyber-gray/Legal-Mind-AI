@@ -1,297 +1,79 @@
-# Legal-Mind-AI v2.0 🏛️
-
-**Enterprise-grade Multi-Agent Legal Analysis System with Azure AI Foundry Integration**
-
-Legal-Mind-AI is a production-ready multi-agent orchestration system that provides expert legal research, analysis, and consultation through **Azure AI Foundry** integration, Semantic Kernel, and intelligent agent orchestration.
-
-[![Production Ready](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)](https://github.com/cyber-gray/Legal-Mind-AI)
-[![Azure AI Foundry](https://img.shields.io/badge/Azure%20AI%20Foundry-Integrated-blue)](https://github.com/cyber-gray/Legal-Mind-AI)
-[![Thread Visibility](https://img.shields.io/badge/Thread%20Visibility-Portal%20Ready-green)](https://github.com/cyber-gray/Legal-Mind-AI)
-
-## 🎉 **Major Milestone: Azure AI Foundry Integration Complete!**
-
-**Latest Achievement (July 2025)**: Successfully integrated with Azure AI Foundry, enabling:
-- ✅ **Real Azure AI Foundry Threads**: Full conversation history visible in portal
-- ✅ **Existing Agent Integration**: Seamless use of user-created agents (no duplicates)
-- ✅ **Dual-Mode Operation**: Foundry + Direct OpenAI with automatic fallback
-- ✅ **100% Success Rate**: Comprehensive testing with 6-agent multi-turn conversations
-- ✅ **Portal Visibility**: Complete thread management via Azure AI Foundry portal
-
-> 📋 **[View Complete Integration Documentation](./AZURE_AI_FOUNDRY_INTEGRATION_CHECKPOINT.md)**
-
-## 🚀 **What's New in v2.0**
-
-- ✅ **Azure AI Foundry Integration**: Native integration with user-created agents and threads
-- ✅ **Thread Management**: Real Azure AI Foundry threads with portal visibility
-- ✅ **Modernized Architecture**: Semantic Kernel 1.34.0 with full async/await
-- ✅ **Multi-Agent Orchestration**: 5 specialized agents with intelligent coordination
-- ✅ **Dual-Mode Operation**: Foundry + Direct OpenAI with seamless fallback
-- ✅ **Quality Scoring System**: Comprehensive response analysis and metrics
-- ✅ **Enterprise Storage**: Azure Storage persistence with conversation tracking
-
-## 🎯 **Key Features**
-
-### **Multi-Agent Orchestration**
-- **5 Specialized Agents**: Research, Policy Analysis, Compliance, Comparative Analysis, Coordination
-- **Intelligent Agent Selection**: Automatic routing based on query analysis
-- **Group Chat Functionality**: Dynamic multi-agent conversations with synthesis
-- **Quality Control**: Built-in quality scoring and analysis validation
-
-### **Enterprise Integration**
-- **Azure AI Foundry**: Complete Azure ecosystem integration
-- **Direct OpenAI API**: High-performance, scalable AI model access
-- **Storage Persistence**: Conversation tracking and history management
-- **Token Analytics**: Usage monitoring for cost optimization
-
-### **Production Features**
-- **Async Processing**: Full async/await implementation for scalability
-- **Error Handling**: Comprehensive error management and logging
-- **Clean Architecture**: Maintainable, documented, professional codebase
-- **Environment Configuration**: Secure, flexible configuration management
-
-## 🏗️ **System Architecture**
-
-### **Azure AI Foundry Integration**
-```mermaid
-graph TD
-    A[User Query] --> B[Enhanced Legal Mind Orchestrator]
-    B --> C{Integration Mode}
-    C -->|Foundry Mode| D[Azure AI Foundry]
-    C -->|Direct Mode| E[Azure OpenAI API]
-    
-    D --> F[Existing User Agents]
-    F --> G[Legal-Mind-Agent - Coordinator]
-    F --> H[Policy-Expert-Agent]
-    F --> I[News-Monitor-Agent]
-    F --> J[Document-Analyzer-Agent] 
-    F --> K[Report-Generator-Agent]
-    
-    G --> L[Azure AI Foundry Thread]
-    H --> L
-    I --> L
-    J --> L
-    K --> L
-    
-    L --> M[Quality Scoring]
-    M --> N[Azure Storage Persistence]
-    N --> O[Portal Visibility]
-    O --> P[User Response]
-    
-    E --> Q[Direct OpenAI Processing]
-    Q --> M
-```
-
-### **Agent Mapping & Integration**
-
-| System Role | Azure AI Foundry Agent | Agent ID | Portal Name |
-|-------------|-------------------------|----------|-------------|
-| **🎯 Coordinator** | Legal-Mind-Agent | `asst_9n1GM1R8Ctgtvg8AxRv56dum` | Orchestration & synthesis |
-| **📋 Policy Analyst** | Policy-Expert-Agent | `asst_ckLjqwTCVE4Vnd8DCr4Mcnyg` | Policy interpretation & analysis |
-| **🔍 Research Agent** | News-Monitor-Agent | `asst_MudTzzQB7zFlbooxmmfR08ux` | Legal research & precedents |
-| **⚖️ Compliance Expert** | Document-Analyzer-Agent | `asst_BkU6ojq194EcZc7fsT1pru03` | Risk assessment & compliance |
-| **🌍 Comparative Analyst** | Report-Generator-Agent | `asst_OsllbKAV8ehEWYBrai4LqG4b` | Cross-jurisdictional analysis |
-
-## 🚀 **Quick Start**
-
-### **Prerequisites**
-- Python 3.11+
-- Azure subscription with OpenAI access
-- Azure Storage account
-- Environment configuration
-
-### **Installation**
-
-1. **Clone the repository:**
-```bash
-git clone https://github.com/cyber-gray/Legal-Mind-AI.git
-cd Legal-Mind-AI
-```
-
-2. **Install dependencies:**
-```bash
-pip install -r requirements.txt
-```
-
-3. **Configure environment:**
-```bash
-# Copy .env template and configure with your Azure credentials
-cp .env.example .env
-```
-
-4. **Run the system:**
-```bash
-# With Azure AI Foundry integration (recommended)
-python legal_mind_experimental.py
-
-# Direct mode only
-python legal_mind_working_system.py
-```
-
-### **Environment Configuration**
-
-#### **Azure AI Foundry Integration (Recommended)**
-```env
-# Azure AI Foundry Project
-AZURE_AI_PROJECT_ENDPOINT=https://your-project.services.ai.azure.com/api/projects/Your-Project
-
-# Azure OpenAI (for fallback)
-AZURE_OPENAI_ENDPOINT=https://your-resource.cognitiveservices.azure.com/
-AZURE_OPENAI_API_KEY=your_openai_api_key
-AZURE_OPENAI_DEPLOYMENT_NAME=your_deployment_name
-
-# Azure Storage (for conversation persistence)
-AZURE_STORAGE_CONNECTION_STRING=your_storage_connection_string
-```
-
-#### **Direct Mode Configuration**
-```env
-# Azure OpenAI Configuration (required)
-AZURE_OPENAI_ENDPOINT=https://your-resource.cognitiveservices.azure.com/
-AZURE_OPENAI_API_KEY=your_openai_api_key
-AZURE_OPENAI_DEPLOYMENT_NAME=your_deployment_name
-
-# Azure Storage (for conversation persistence)
-AZURE_STORAGE_CONNECTION_STRING=your_storage_connection_string
-```
-
-### **Azure AI Foundry Setup**
-
-1. **Create Azure AI Foundry Project:**
-   - Navigate to [Azure AI Foundry](https://ai.azure.com)
-   - Create new project: "Legal-Mind"
-   - Note your project endpoint URL
-
-2. **Create Agents in Foundry:**
-   - Create 5 specialized agents with custom instructions
-   - Map agent IDs to system roles in code
-   - Agents will appear in your Foundry portal
-
-3. **Configure Authentication:**
-   - Use Azure CLI: `az login`
-   - Or configure managed identity for production
-
-## 💡 **Usage Examples**
-
-### **Sample Queries**
-
-#### **Multi-Jurisdictional Analysis:**
-```
-"We're implementing biometric employee monitoring across California, New York, London, and Frankfurt. Analyze legal frameworks and compliance requirements."
-```
-
-#### **Policy Analysis:**
-```
-"What are the latest developments in AI policy as of 2025?"
-```
-
-#### **Compliance Assessment:**
-```
-"Compare cryptocurrency regulations between US, EU, and UK for fintech compliance."
-```
-
-### **Interactive Session**
-
-```bash
-🏛️  LEGAL-MIND-AI WORKING SYSTEM - Interactive Session
-================================================================================
-Multi-agent legal analysis with specialized experts
-Using direct Azure OpenAI integration (no Agents API required)
-Commands: 'exit' to quit, 'reset' to restart
-================================================================================
-
-Legal Query > What are the GDPR compliance requirements for AI systems?
-
-🤖 COORDINATOR (Response 1):
-[Detailed coordination and analysis...]
-
-🤖 RESEARCHAGENT (Response 2):
-[Comprehensive legal research...]
-
-🤖 POLICYANALYST (Response 3):
-[Policy framework analysis...]
-
-🤖 COMPLIANCEEXPERT (Response 4):
-[Compliance assessment...]
-
-🤖 COORDINATOR (FINAL SYNTHESIS) (Response 5):
-[Quality Score: 9/10 - Comprehensive analysis complete]
-```
-
-## 📊 **Performance Metrics**
-
-- **Response Time**: 2-3 seconds per agent
-- **Quality Scores**: 8-10/10 for complex legal queries
-- **Token Efficiency**: Optimized API usage with comprehensive tracking
-- **Agent Coordination**: Perfect multi-agent conversation flow
-- **Error Rate**: 0% in production testing
-
-## 📁 **Project Structure**
-
-```
-Legal-Mind-AI/
-├── legal_mind_working_system.py    # Main production orchestrator
-├── requirements.txt                # Python dependencies
-├── .env                           # Environment configuration
-├── README.md                      # This file
-├── LICENSE                        # MIT License
-└── docs/                         # Documentation
-    ├── PROJECT_COMPLETION_SUMMARY.md
-    ├── FINAL_SYSTEM_DOCUMENTATION.md
-    ├── GROUP_CHAT_IMPLEMENTATION_SUMMARY.md
-    ├── AZURE_AI_FOUNDRY_AGENT_IMPLEMENTATION.md
-    ├── ENVIRONMENT_SETUP_GUIDE.md
-    └── FOUNDRY_INTEGRATION_GUIDE.md
-```
-
-## 🛠️ **Development**
-
-### **Key Technologies**
-- **Semantic Kernel**: 1.34.0 with async function-based plugins
-- **Azure AI Services**: OpenAI, Storage, AI Foundry
-- **Python**: 3.11+ with asyncio and modern patterns
-- **Architecture**: Clean, maintainable, production-ready code
-
-### **Testing**
-The system has been thoroughly tested with complex multi-jurisdictional legal queries, demonstrating:
-- Perfect agent coordination
-- High-quality legal analysis (10/10 scores)
-- Reliable conversation persistence
-- Comprehensive error handling
-
-## 📈 **Roadmap**
-
-### **Future Enhancements**
-- Web interface (Streamlit/Flask)
-- Additional specialized agents
-- External legal database integration
-- Enhanced analytics and reporting
-- API endpoint development
-
-## 🤝 **Contributing**
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/enhancement`)
-3. Commit your changes (`git commit -m 'Add enhancement'`)
-4. Push to the branch (`git push origin feature/enhancement`)
-5. Open a Pull Request
-
-## 📄 **License**
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🎯 **Support & Documentation**
-
-- **Issues**: [GitHub Issues](https://github.com/cyber-gray/Legal-Mind-AI/issues)
-- **Documentation**: See `/docs` directory for comprehensive guides
-- **Architecture**: Review system documentation for technical details
-
-## 🏆 **Acknowledgments**
-
-- **Microsoft Semantic Kernel Team**: For the excellent orchestration framework
-- **Azure AI Foundry**: For enterprise-grade AI infrastructure
-- **OpenAI**: For powerful language models
-- **Legal Domain Experts**: For guidance and validation
-
----
-
-**Status: 🟢 PRODUCTION READY** | **Version: 2.0** | **Last Updated: July 18, 2025**
+# Overview of the AI Agent template
+
+This app template is built on top of [Teams AI library](https://aka.ms/teams-ai-library).
+It showcases how to build an AI agent in Teams capable of chatting with users and helping users accomplish a specific task using natural language right in the Teams conversations, such as managing tasks.
+
+## Get started with the template
+
+> **Prerequisites**
+>
+> To run the template in your local dev machine, you will need:
+>
+> - [Python](https://www.python.org/), version 3.8 to 3.11.
+> - [Python extension](https://code.visualstudio.com/docs/languages/python), version v2024.0.1 or higher.
+> - [Microsoft 365 Agents Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) latest version or [Microsoft 365 Agents Toolkit CLI](https://aka.ms/teams-toolkit-cli).
+> - An account with [Azure OpenAI](https://aka.ms/oai/access).
+> - A [Microsoft 365 account for development](https://docs.microsoft.com/microsoftteams/platform/toolkit/accounts).
+
+### Configurations
+1. Open the command box and enter `Python: Create Environment` to create and activate your desired virtual environment. Remember to select `src/requirements.txt` as dependencies to install when creating the virtual environment.
+1. In file *env/.env.local.user*, fill in your Azure OpenAI key `SECRET_AZURE_OPENAI_API_KEY`, deployment name `AZURE_OPENAI_MODEL_DEPLOYMENT_NAME` and endpoint `AZURE_OPENAI_ENDPOINT`.
+
+### Conversation with agent
+1. Select the Microsoft 365 Agents Toolkit icon on the left in the VS Code toolbar.
+1. In the Account section, sign in with your [Microsoft 365 account](https://docs.microsoft.com/microsoftteams/platform/toolkit/accounts) if you haven't already.
+1. Press F5 to start debugging which launches your app in Teams using a web browser. Select `Debug in Teams (Edge)` or `Debug in Teams (Chrome)`.
+1. When Teams launches in the browser, select the Add button in the dialog to install your app to Teams.
+1. You will receive a welcome message from the agent, or send any message to get a response.
+
+**Congratulations**! You are running an application that can now interact with users in Teams:
+
+> For local debugging using Microsoft 365 Agents Toolkit CLI, you need to do some extra steps described in [Set up your Microsoft 365 Agents Toolkit CLI for local debugging](https://aka.ms/teamsfx-cli-debugging).
+
+![ai agent](https://github.com/OfficeDev/TeamsFx/assets/109947924/775a0fde-f2ba-4198-a94d-a43c598d6e9b)
+
+## What's included in the template
+
+| Folder       | Contents                                            |
+| - | - |
+| `.vscode`    | VSCode files for debugging                          |
+| `appPackage` | Templates for the application manifest        |
+| `env`        | Environment files                                   |
+| `infra`      | Templates for provisioning Azure resources          |
+| `src`        | The source code for the application                 |
+
+The following files can be customized and demonstrate an example implementation to get you started.
+
+| File                                 | Contents                                           |
+| - | - |
+|`src/app.py`| Hosts an aiohttp api server and exports an app module.|
+|`src/bot.py`| Handles business logics for the AI Agent.|
+|`src/config.py`| Defines the environment variables.|
+|`src/state.py`| Defines the app state of AI Agent.|
+|`src/prompts/planner/skprompt.txt`| Defines the prompt.|
+|`src/prompts/planner/config.json`| Configures the prompt.|
+|`src/prompts/planner/action.json`| Configures the actions.|
+
+The following are Microsoft 365 Agents Toolkit specific project files. You can [visit a complete guide on Github](https://github.com/OfficeDev/TeamsFx/wiki/Teams-Toolkit-Visual-Studio-Code-v5-Guide#overview) to understand how Microsoft 365 Agents Toolkit works.
+
+| File                                 | Contents                                           |
+| - | - |
+|`m365agents.yml`|This is the main Microsoft 365 Agents Toolkit project file. The project file defines two primary things:  Properties and configuration Stage definitions. |
+|`m365agents.local.yml`|This overrides `m365agents.yml` with actions that enable local execution and debugging.|
+|`m365agents.playground.yml`|This overrides `m365agents.yml` with actions that enable local execution and debugging in Microsoft 365 Agents Playground.|
+
+## Extend the template
+
+You can follow [Build an AI Agent in Teams](https://aka.ms/teamsfx-ai-agent) to extend the AI Agent template with more AI capabilities, like:
+- [Add functions](https://aka.ms/teamsfx-ai-agent#add-functions-build-new)
+
+## Additional information and references
+
+- [Microsoft 365 Agents Toolkit Documentations](https://docs.microsoft.com/microsoftteams/platform/toolkit/teams-toolkit-fundamentals)
+- [Microsoft 365 Agents Toolkit CLI](https://aka.ms/teamsfx-toolkit-cli)
+- [Microsoft 365 Agents Toolkit Samples](https://github.com/OfficeDev/TeamsFx-Samples)
+
+## Known issue
+- If you use `Debug in Microsoft 365 Agents Playground` to local debug, you might get an error `InternalServiceError: connect ECONNREFUSED 127.0.0.1:3978` in Microsoft 365 Agents Playground console log or error message `Error: Cannot connect to your app,
+please make sure your app is running or restart your app` in log panel of Microsoft 365 Agents Playground web page. You can wait for Python launch console ready and then refresh the front end web page.
+- When you use `Launch Remote in Teams` to remote debug after deployment, you might loose interaction with your agent. This is because the remote service needs to restart. Please wait for several minutes to retry it.
