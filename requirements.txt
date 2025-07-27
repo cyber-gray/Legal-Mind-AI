@@ -1,13 +1,9 @@
-# Core Dependencies
-python-dotenv>=1.0.0
-aiohttp>=3.9.1
+# Legal Mind Agent Pro - Dependencies
+# Microsoft Teams Bot Framework Requirements
 
-# Microsoft Semantic Kernel
-semantic-kernel>=1.0.0
-semantic-kernel[azure_openai]>=1.0.0
-
-# Azure AI & Bot Framework
-azure-ai-projects==1.0.0b11
+aiohttp==3.9.1
+botbuilder-core==4.15.0
+botbuilder-schema==4.15.0
 azure-identity>=1.15.0
 azure-ai-agents==1.1.0b2
 azure-core>=1.30.0
