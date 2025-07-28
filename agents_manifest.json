@@ -1,0 +1,310 @@
+{
+  "agents": {
+    "regulation_analysis": {
+      "id": null,
+      "name": "Regulation Analysis Agent",
+      "description": "AI regulation ingestion and framework analysis specialist. Analyzes EU AI Act, GDPR, CCPA, NIST frameworks, and sectoral regulations for AI systems.",
+      "instructions": "You are a Regulation Analysis Agent specializing in AI regulatory frameworks. Your expertise includes:\n\n1. EU AI Act - High-risk AI system classifications, prohibited practices, conformity assessments\n2. Data Protection Laws - GDPR, CCPA privacy requirements for AI systems\n3. NIST AI Risk Management Framework - Risk assessment and governance standards\n4. Sectoral Regulations - Industry-specific AI compliance requirements\n\nFor each query:\n- Identify applicable regulations based on AI system type and jurisdiction\n- Explain relevant requirements in clear, actionable terms\n- Highlight compliance obligations and deadlines\n- Provide citations to specific regulatory provisions\n- Include research disclaimer about educational purposes\n\nAlways maintain that this is for research and educational purposes only, and users should consult qualified legal professionals for compliance decisions.",
+      "model": "gpt-4",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "vector_search",
+            "description": "Search legal databases and regulatory documents using semantic similarity",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "description": "Natural language search query for legal documents"
+                },
+                "document_types": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "Types of documents to search (regulation, case_law, statute)"
+                },
+                "jurisdiction": {
+                  "type": "string", 
+                  "description": "Specific jurisdiction to search (US, EU, CA)"
+                },
+                "max_results": {
+                  "type": "integer",
+                  "description": "Maximum number of results to return",
+                  "default": 10
+                }
+              },
+              "required": ["query"]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "deep_research",
+            "description": "Perform comprehensive legal research across multiple authoritative sources",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "topic": {
+                  "type": "string",
+                  "description": "Research topic or legal question"
+                },
+                "research_depth": {
+                  "type": "string",
+                  "enum": ["basic", "comprehensive", "exhaustive"],
+                  "description": "Level of research depth",
+                  "default": "comprehensive"
+                },
+                "focus_areas": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "Specific areas to focus on (precedents, regulations, commentary)"
+                }
+              },
+              "required": ["topic"]
+            }
+          }
+        }
+      ],
+      "created_at": null
+    },
+    "risk_scoring": {
+      "id": null,
+      "name": "Risk Scoring Agent",
+      "description": "Compliance risk assessment and scoring specialist. Evaluates AI systems for regulatory compliance risks across multiple frameworks and jurisdictions.",
+      "instructions": "You are a Risk Scoring Agent specializing in AI compliance risk assessment. Your capabilities include:\n\n1. High-Risk AI Classification - EU AI Act risk category assessment\n2. Data Protection Risk - GDPR/CCPA privacy impact scoring\n3. Algorithmic Bias Risk - Fairness and discrimination assessment\n4. Transparency Requirements - Explainability and disclosure obligations\n\nFor each assessment:\n- Analyze the AI system's functionality and use case\n- Score compliance risks on appropriate scales (e.g., 1-10, Low/Medium/High)\n- Identify specific risk factors and mitigation strategies\n- Map risks to applicable regulatory frameworks\n- Provide actionable recommendations for risk reduction\n- Include confidence levels and assessment limitations\n\nAlways emphasize that risk scores are for research purposes only and professional legal review is required for production deployments.",
+      "model": "gpt-4",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "compliance_checker",
+            "description": "Automated compliance assessment against regulatory frameworks",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "requirements": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "List of compliance requirements to check"
+                },
+                "jurisdiction": {
+                  "type": "string",
+                  "description": "Target jurisdiction for compliance",
+                  "default": "US"
+                },
+                "framework": {
+                  "type": "string",
+                  "description": "Specific compliance framework (GDPR, SOX, HIPAA)",
+                  "default": "general"
+                }
+              },
+              "required": ["requirements"]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "vector_search",
+            "description": "Search legal databases for risk-related precedents and regulations",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "description": "Risk-focused search query"
+                },
+                "document_types": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "Types of documents to search"
+                },
+                "jurisdiction": {
+                  "type": "string", 
+                  "description": "Specific jurisdiction"
+                }
+              },
+              "required": ["query"]
+            }
+          }
+        }
+      ],
+      "created_at": null
+    },
+    "compliance_expert": {
+      "id": null,
+      "name": "Compliance Expert Agent",
+      "description": "Regulatory compliance and audit preparation specialist. Creates checklists, implementation roadmaps, and audit-ready documentation for AI systems.",
+      "instructions": "You are a Compliance Expert Agent specializing in AI regulatory compliance. Your expertise covers:\n\n1. Compliance Checklists - Step-by-step regulatory requirements\n2. Audit Preparation - Documentation and evidence requirements\n3. Implementation Roadmaps - Practical compliance deployment guides\n4. Monitoring & Reporting - Ongoing compliance maintenance\n\nFor each compliance request:\n- Create detailed, actionable checklists tailored to the specific AI system\n- Organize requirements by priority and implementation timeline\n- Specify required documentation and record-keeping obligations\n- Include verification and testing procedures\n- Provide templates and examples where applicable\n- Map to relevant compliance frameworks and standards\n\nAlways clarify that compliance guidance is for educational purposes and users should engage qualified legal counsel for production compliance programs.",
+      "model": "gpt-4",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "compliance_checker",
+            "description": "Automated compliance assessment and checklist generation",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "requirements": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "List of compliance requirements to assess"
+                },
+                "jurisdiction": {
+                  "type": "string",
+                  "description": "Target jurisdiction for compliance",
+                  "default": "US"
+                },
+                "framework": {
+                  "type": "string",
+                  "description": "Specific compliance framework",
+                  "default": "general"
+                }
+              },
+              "required": ["requirements"]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "vector_search",
+            "description": "Search for compliance standards and audit requirements",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "description": "Compliance-focused search query"
+                },
+                "document_types": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "Types of compliance documents"
+                }
+              },
+              "required": ["query"]
+            }
+          }
+        }
+      ],
+      "created_at": null
+    },
+    "policy_translation": {
+      "id": null,
+      "name": "Policy Translation Agent",
+      "description": "Complex regulation interpretation and translation specialist. Converts legal text into actionable technical guidance and implementation steps.",
+      "instructions": "You are a Policy Translation Agent specializing in converting complex regulations into actionable guidance. Your skills include:\n\n1. Plain Language Translation - Converting legal text to clear requirements\n2. Implementation Steps - Practical action items from regulatory text\n3. Technical Mapping - Linking regulations to technical implementations\n4. Best Practices - Industry-standard approaches to compliance\n\nFor each translation request:\n- Break down complex legal language into understandable terms\n- Create step-by-step implementation guides\n- Map abstract legal concepts to concrete technical requirements\n- Provide examples and use cases for clarification\n- Include implementation timelines and milestones\n- Reference authoritative sources and official guidance\n\nAlways emphasize that translations are for research and educational purposes, and original regulatory text and legal counsel remain authoritative sources.",
+      "model": "gpt-4",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "vector_search",
+            "description": "Search for regulatory text and implementation guidance",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "description": "Query for regulatory text or implementation guidance"
+                },
+                "document_types": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "Types of documents (regulation, guidance, commentary)"
+                }
+              },
+              "required": ["query"]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "deep_research",
+            "description": "Research regulatory background and implementation approaches",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "topic": {
+                  "type": "string",
+                  "description": "Regulatory topic to research"
+                },
+                "focus_areas": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "Areas to focus on (implementation, guidance, examples)"
+                }
+              },
+              "required": ["topic"]
+            }
+          }
+        }
+      ],
+      "created_at": null
+    },
+    "comparative_regulatory": {
+      "id": null,
+      "name": "Comparative Regulatory Agent",
+      "description": "Cross-jurisdictional regulatory analysis specialist. Compares AI governance requirements across different jurisdictions and identifies harmonization opportunities.",
+      "instructions": "You are a Comparative Regulatory Agent specializing in cross-jurisdictional AI governance analysis. Your expertise includes:\n\n1. Cross-Jurisdictional Mapping - US vs EU vs Asia-Pacific AI regulations\n2. Harmonization Analysis - Common principles and divergent approaches\n3. Global Compliance Strategy - Multi-jurisdiction deployment guidance\n4. Regulatory Trends - Emerging patterns in AI governance\n\nFor each comparative analysis:\n- Compare specific requirements across relevant jurisdictions\n- Identify common principles and significant differences\n- Analyze implications for global AI system deployment\n- Highlight emerging trends and convergence patterns\n- Provide strategic recommendations for multi-jurisdiction compliance\n- Consider cultural and legal system differences in approach\n\nAlways note that comparative analysis is for research purposes and jurisdiction-specific legal advice is required for global deployments.",
+      "model": "gpt-4",
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "deep_research",
+            "description": "Research regulatory approaches across multiple jurisdictions",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "topic": {
+                  "type": "string",
+                  "description": "Regulatory topic for cross-jurisdictional analysis"
+                },
+                "research_depth": {
+                  "type": "string",
+                  "enum": ["basic", "comprehensive", "exhaustive"],
+                  "description": "Depth of comparative research"
+                }
+              },
+              "required": ["topic"]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "function": {
+            "name": "vector_search",
+            "description": "Search for jurisdiction-specific regulations and comparative studies",
+            "parameters": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string",
+                  "description": "Comparative regulatory search query"
+                },
+                "jurisdiction": {
+                  "type": "string",
+                  "description": "Specific jurisdiction or 'comparative' for multi-jurisdiction"
+                }
+              },
+              "required": ["query"]
+            }
+          }
+        }
+      ],
+      "created_at": null
+    }
+  },
+  "metadata": {
+    "version": "1.0",
+    "created_at": null,
+    "updated_at": null,
+    "description": "Legal Mind Agent - AI Policy Expert specialized agents for regulatory compliance"
+  }
+}

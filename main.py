@@ -12,6 +12,7 @@ import json
 import logging
 import os
 import sys
+from datetime import datetime
 from typing import List
 
 import aiohttp
@@ -452,24 +453,73 @@ async def messages(request: Request) -> Response:
         # Return 200 to avoid Teams retry loops
         return web.Response(status=200)
 
-# Health check endpoint
+# Health check endpoint - Enhanced for Azure App Service stability
 async def health_check(request: Request) -> Response:
-    """Health check endpoint for monitoring with enhanced Teams integration status"""
-    return web.json_response({
-        "status": "healthy", 
-        "bot": "Legal Mind Agent", 
-        "version": "v3.0",
-        "framework": "Bot Framework SDK 4.17",
-        "teams_integration": "Enhanced with proper messaging patterns",
-        "agents": [
-            "Regulation Analysis Agent",
-            "Risk Scoring Agent", 
-            "Compliance Expert",
-            "Policy Translation Agent",
-            "Comparative Regulatory Agent"
-        ],
-        "disclaimer": "Research and educational purposes only - not legal advice"
-    })
+    """
+    Health check endpoint for monitoring with enhanced Teams integration status
+    Designed for Azure App Service Always-On and Application Insights availability tests
+    """
+    try:
+        # Pre-warm critical components to prevent cold starts
+        await _warm_up_components()
+        
+        health_status = {
+            "status": "healthy", 
+            "timestamp": datetime.utcnow().isoformat(),
+            "bot": "Legal Mind Agent", 
+            "version": "v3.0",
+            "framework": "Bot Framework SDK 4.17",
+            "teams_integration": "Enhanced with proper messaging patterns",
+            "azure_agents": "Integrated with ThreadSession management",
+            "tools": ["Vector Search", "Deep Research", "Compliance Checker"],
+            "agents": [
+                "Regulation Analysis Agent",
+                "Risk Scoring Agent", 
+                "Compliance Expert",
+                "Policy Translation Agent",
+                "Comparative Regulatory Agent"
+            ],
+            "environment": {
+                "python_version": "3.11",
+                "port": os.getenv("PORT", "80"),
+                "azure_agents_configured": bool(os.getenv("AZURE_AI_AGENTS_ENDPOINT")),
+                "app_service_ready": True
+            },
+            "performance": {
+                "startup_optimized": True,
+                "always_on_recommended": True,
+                "cold_start_mitigation": "Active"
+            },
+            "disclaimer": "Research and educational purposes only - not legal advice"
+        }
+        
+        return web.json_response(health_status)
+        
+    except Exception as e:
+        logger.error(f"Health check failed: {e}")
+        return web.json_response({
+            "status": "unhealthy",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }, status=500)
+
+async def _warm_up_components():
+    """Pre-warm critical components to prevent cold start delays"""
+    try:
+        # Import and initialize key modules
+        from thread_session import get_thread_session
+        from legal_tools import get_legal_tools
+        
+        # Pre-warm ThreadSession (this initializes agents)
+        thread_session = await get_thread_session()
+        
+        # Pre-warm legal tools
+        legal_tools = get_legal_tools()
+        
+        logger.debug("Components pre-warmed successfully")
+        
+    except Exception as e:
+        logger.warning(f"Component warm-up failed (non-critical): {e}")
 
 # Initialize the bot and adapter
 def initialize_bot():
