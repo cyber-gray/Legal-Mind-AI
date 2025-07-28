@@ -54,7 +54,7 @@ graph TB
 ### Prerequisites
 
 - **Microsoft Teams** account with bot deployment permissions
-- **Azure Account** with App Service and Bot Service access
+- **Azure Account** with App Service and Bot Service access  
 - **Python 3.11+** for local development
 
 ### 1. Clone and Setup
