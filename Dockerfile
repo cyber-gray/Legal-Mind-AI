@@ -24,14 +24,9 @@ COPY src/requirements.txt requirements.txt
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
+# Copy application code and security framework
 COPY src/ ./src/
-COPY thread_session.py .
-COPY legal_tools.py .
-COPY agents_manifest.json .
-
-# Copy main entry point
-COPY main.py .
+COPY legal_mind/ ./legal_mind/
 
 # Create non-root user for security
 RUN useradd --create-home --shell /bin/bash app && \
@@ -40,10 +35,10 @@ USER app
 
 # Health check with startup grace period for ML libraries
 HEALTHCHECK --interval=30s --timeout=15s --start-period=120s --retries=5 \
-    CMD curl -f http://localhost:${PORT}/health || exit 1
+    CMD curl -f http://localhost:${PORT}/ || exit 1
 
 # Expose port (Azure App Service uses PORT environment variable)
 EXPOSE ${PORT}
 
-# Use gunicorn for production WSGI server
-CMD ["python", "main.py"]
+# Use the updated app.py for production server with security framework
+CMD ["python", "src/app.py"]

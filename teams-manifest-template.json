@@ -1,0 +1,76 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.16/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.16",
+  "version": "1.0.0",
+  "id": "{{APP_ID}}",
+  "packageName": "com.legalmind.agent",
+  "developer": {
+    "name": "Legal Mind AI",
+    "websiteUrl": "https://{{APP_NAME}}.azurewebsites.net",
+    "privacyUrl": "https://{{APP_NAME}}.azurewebsites.net/privacy",
+    "termsOfUseUrl": "https://{{APP_NAME}}.azurewebsites.net/terms"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "Legal Mind Agent",
+    "full": "Legal Mind AI Agent - Legal Research and Compliance Assistant"
+  },
+  "description": {
+    "short": "AI-powered legal research and compliance assistant",
+    "full": "Advanced AI agent providing legal research, regulation analysis, compliance checking, and document review capabilities powered by Azure AI Agents Service."
+  },
+  "accentColor": "#0078D4",
+  "bots": [
+    {
+      "botId": "{{APP_ID}}",
+      "scopes": [
+        "personal",
+        "team",
+        "groupchat"
+      ],
+      "supportsFiles": false,
+      "isNotificationOnly": false,
+      "commandLists": [
+        {
+          "scopes": [
+            "personal",
+            "team",
+            "groupchat"
+          ],
+          "commands": [
+            {
+              "title": "Legal Research",
+              "description": "Search legal databases and analyze regulations"
+            },
+            {
+              "title": "Compliance Check",
+              "description": "Review documents for compliance issues"
+            },
+            {
+              "title": "Contract Analysis", 
+              "description": "Analyze contracts and legal documents"
+            },
+            {
+              "title": "Help",
+              "description": "Get help with Legal Mind Agent capabilities"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": [
+    "{{APP_NAME}}.azurewebsites.net"
+  ],
+  "webApplicationInfo": {
+    "id": "{{APP_ID}}",
+    "resource": "https://RscBasedStoreApp"
+  }
+}

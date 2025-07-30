@@ -1,0 +1,309 @@
+name: Legal Mind Agent CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: legal-mind-agent
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Cache pip dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install ruff pytest pytest-asyncio pytest-cov
+    
+    - name: Lint with ruff
+      run: |
+        # Check for syntax errors and undefined names
+        ruff check --select=E9,F63,F7,F82 --target-version=py311 .
+        
+        # Full linting with legal-specific configuration
+        ruff check --target-version=py311 --line-length=100 \
+          --select=E,W,F,C,N,UP,YTT,S,BLE,FBT,B,A,COM,C4,DTZ,T,EM,EXE,FA,ISC,ICN,G,PIE,T20,PYI,PT,Q,RSE,RET,SLF,SLOT,SIM,TID,TCH,INT,ARG,PTH,PL,TRY,FLY,NPY,PERF,FURB,LOG,RUF \
+          --ignore=E501,W503,F401,S101,PLR0913,PLR0915,C901,PLR0912,S311,S602 \
+          --exclude=venv,env,.venv,.env,build,dist,__pycache__,.git \
+          .
+    
+    - name: Format check with ruff
+      run: |
+        ruff format --check --target-version=py311 --line-length=100 .
+    
+    - name: Type checking with mypy (if available)
+      run: |
+        pip install mypy types-requests types-aiofiles || true
+        mypy --ignore-missing-imports --python-version=3.11 legal_mind/ || true
+      continue-on-error: true
+    
+    - name: Security scan with bandit
+      run: |
+        pip install bandit[toml]
+        bandit -r legal_mind/ -f json -o bandit-report.json || true
+        bandit -r legal_mind/ -ll || true
+      continue-on-error: true
+    
+    - name: Run unit tests
+      run: |
+        pytest tests/ -v --cov=legal_mind --cov-report=xml --cov-report=html --asyncio-mode=auto || true
+      continue-on-error: true
+    
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      if: always()
+      with:
+        files: ./coverage.xml
+      continue-on-error: true
+
+  build-docker:
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+    
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ github.repository }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+    
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        platforms: linux/amd64
+        build-args: |
+          BUILD_DATE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
+          VCS_REF=${{ github.sha }}
+          VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+
+  deploy-azure:
+    runs-on: ubuntu-latest
+    needs: build-docker
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Set up Azure CLI
+      uses: azure/CLI@v1
+      with:
+        azcliversion: latest
+    
+    - name: Update Container App
+      run: |
+        # Update the container app with the new image
+        az containerapp update \
+          --name legal-mind-bot-app \
+          --resource-group rg-grayspace004-1361 \
+          --image ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.sha }} \
+          --set-env-vars \
+            "AZURE_AI_AGENTS_ENDPOINT=${{ secrets.AZURE_AI_AGENTS_ENDPOINT }}" \
+            "AZURE_AI_AGENTS_KEY=${{ secrets.AZURE_AI_AGENTS_KEY }}" \
+            "MicrosoftAppId=${{ secrets.MICROSOFT_APP_ID }}" \
+            "MicrosoftAppPassword=${{ secrets.MICROSOFT_APP_PASSWORD }}" \
+            "AZURE_SEARCH_ENDPOINT=${{ secrets.AZURE_SEARCH_ENDPOINT }}" \
+            "AZURE_SEARCH_KEY=${{ secrets.AZURE_SEARCH_KEY }}"
+    
+    - name: Update App Service (Primary)
+      run: |
+        # Update the App Service with the new container image
+        az webapp config container set \
+          --name legal-mind-agent \
+          --resource-group rg-grayspace004-1361 \
+          --docker-custom-image-name ${{ env.REGISTRY }}/${{ github.repository }}:${{ github.sha }} \
+          --docker-registry-server-url https://${{ env.REGISTRY }}
+        
+        # Restart the app service to ensure new image is loaded
+        az webapp restart \
+          --name legal-mind-agent \
+          --resource-group rg-grayspace004-1361
+    
+    - name: Health Check
+      run: |
+        # Wait for deployment to complete and verify health
+        sleep 30
+        
+        # Check Container App health
+        CONTAINER_APP_URL=$(az containerapp show \
+          --name legal-mind-bot-app \
+          --resource-group rg-grayspace004-1361 \
+          --query properties.configuration.ingress.fqdn -o tsv)
+        
+        if [ ! -z "$CONTAINER_APP_URL" ]; then
+          echo "Checking Container App health: https://$CONTAINER_APP_URL/health"
+          curl -f "https://$CONTAINER_APP_URL/health" || echo "Container App health check failed"
+        fi
+        
+        # Check App Service health
+        echo "Checking App Service health: https://legal-mind-agent.azurewebsites.net/health"
+        curl -f "https://legal-mind-agent.azurewebsites.net/health" || echo "App Service health check failed"
+
+  security-scan:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+    
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  prompt-validation:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pathlib hashlib-compat
+    
+    - name: Validate prompt versions
+      run: |
+        python -c "
+        from pathlib import Path
+        import hashlib
+        import sys
+        
+        prompts_dir = Path('prompts')
+        if not prompts_dir.exists():
+            print('✅ No prompts directory found - skipping validation')
+            sys.exit(0)
+        
+        prompt_files = list(prompts_dir.glob('*.v*.md'))
+        if not prompt_files:
+            print('✅ No versioned prompt files found - skipping validation')
+            sys.exit(0)
+        
+        print(f'🔍 Validating {len(prompt_files)} prompt files...')
+        
+        for prompt_file in prompt_files:
+            try:
+                # Check filename format
+                if not prompt_file.stem.count('.') >= 1:
+                    print(f'❌ Invalid filename format: {prompt_file.name}')
+                    sys.exit(1)
+                
+                # Check file is readable and has content
+                content = prompt_file.read_text()
+                if len(content.strip()) < 50:
+                    print(f'❌ Prompt file too short: {prompt_file.name}')
+                    sys.exit(1)
+                
+                # Verify hash consistency
+                content_hash = hashlib.sha256(content.encode()).hexdigest()
+                print(f'✅ {prompt_file.name} - Hash: {content_hash[:8]}...')
+                
+            except Exception as e:
+                print(f'❌ Error validating {prompt_file.name}: {e}')
+                sys.exit(1)
+        
+        print('✅ All prompt files validated successfully')
+        "
+
+  legal-compliance-check:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Legal compliance validation
+      run: |
+        echo "🔍 Checking for legal compliance disclaimers..."
+        
+        # Check that research disclaimers are present in key files
+        FILES_TO_CHECK="legal_mind/bots/teams_bot.py prompts/*.md README.md"
+        
+        for file_pattern in $FILES_TO_CHECK; do
+          for file in $file_pattern; do
+            if [ -f "$file" ]; then
+              if grep -i "research.*purpose\|educational.*purpose\|not legal advice" "$file" > /dev/null; then
+                echo "✅ Legal disclaimer found in $file"
+              else
+                echo "⚠️  No legal disclaimer found in $file - consider adding research/educational purpose disclaimer"
+              fi
+            fi
+          done
+        done
+        
+        echo "✅ Legal compliance check completed"

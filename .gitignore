@@ -12,6 +12,18 @@ __pycache__/
 # VS Code settings
 .vscode/
 
+# Security and sensitive files
+*.key
+*.pem
+*.p12
+*.pfx
+security-deployment-summary.json
+security-validation-report.json
+update-credentials.sh
+*.env
+.azure/
+.secrets/
+
 # others
 .deployment/
 node_modules/
